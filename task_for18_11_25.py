@@ -1,5 +1,6 @@
 import os
 import shutil
+import threading
 from threading import Thread
 from tkinter import Tk, messagebox, filedialog
 from tkinter.ttk import Frame, Label, Entry, Button, Style
@@ -15,14 +16,19 @@ def copy_file(source_file_path, copy_file_path):
     except Exception as e:
         messagebox.showerror("Error!" , str(e))
 
-
+#right now is working how is need to be, so we can add more copies
+def thread_file(source_file_path, copy_file_path):
+    thread = threading.Thread(target=copy_file, args=(source_file_path, copy_file_path))
+    thread.start()
 
 
     Thread(target=copy_file, args=(source_file_path, copy_file_path)).start()
-
+#если askopenfilenames то можно выбрать много файлов
 def choose_file(text_widget):
     file_path = filedialog.askopenfilename(title="Choose a file")
+    #будет чистится поле для ввода
     text_widget.delete(0, tk.END)
+    #вставит текстовый путь к файлу в поле
     text_widget.insert(0, file_path)
 
 def choose_dir(text_widget_1, text_widget_2):
@@ -38,7 +44,9 @@ root.title("Coping Files")
 root.geometry("850x210")
 root.resizable(True, True)
 # Рамка всередині вікна
+#отступ везде 12 пиксилей
 frame = Frame(root, padding=12)
+#разшириается по всему окну expand
 frame.pack(fill="both", expand=True)
 # Шрифт
 FONT = tkfont.Font(family="Segoe UI", size=12)
@@ -66,4 +74,5 @@ btn2.grid(row=3, column=2, sticky="e")
 # Кнопка 3
 btn3 = Button(frame, text="Copy", command=lambda: copy_file(entry1.get(), entry2.get()))
 btn3.grid(row=4, column=0, sticky="w", pady=(24, 0))
+
 root.mainloop()
